@@ -13,11 +13,11 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 max-lg:px-4">
+    <main className="flex min-h-screen flex-col items-center justify-between px-20 p-8 max-lg:px-4">
       {!messages ? (
         <div className="w-full max-w-md">
           <h1 className="text-2xl font-bold mb-4 text-center">
-            Subir archivo de WhatsApp
+            Upload your WhatsApp chat history to visualize it!
           </h1>
           <div className="flex justify-center">
             <MyDropzone onMessagesParsed={handleMessagesParsed} />
