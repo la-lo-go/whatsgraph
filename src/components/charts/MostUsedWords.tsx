@@ -60,10 +60,10 @@ function getTopWordsBySender(data: WhatsAppMessages[]): TopWordsBySender {
       const regex = /[<>]/;
       if (!regex.test(msg.message)) {
         const words = msg.message
-          .replace(/[^a-zA-Z\s]/g, "")
+          .replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, "")
           .toLowerCase()
           .split(/\s+/)
-          .filter((word) => word.length > 4);
+          .filter((word) => word.length > 4 && /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g.test(word));
 
         words.forEach((word) => {
           if (word) {
