@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "WhatsGraph",
+  title: process.env.PRO ? "WhatsGraph" : "[DEV] WhatsGraph",
   description: "Easily visualize your WhatsApp conversations data",
 };
 
