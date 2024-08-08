@@ -7,9 +7,11 @@ import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
 
 export default function Home() {
   const [messages, setMessages] = useState<WhatsAppMessages[] | null>(null);
+  const [dropzoneKey, setDropzoneKey] = useState(0);
 
   const handleMessagesParsed = (parsedMessages: WhatsAppMessages[]) => {
     setMessages(parsedMessages);
+    setDropzoneKey(prevKey => prevKey + 1);
   };
 
   return (
@@ -20,7 +22,7 @@ export default function Home() {
             Upload your WhatsApp chat history to visualize it!
           </h1>
           <div className="flex justify-center">
-            <MyDropzone onMessagesParsed={handleMessagesParsed} />
+            <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
           </div>
         </div>
       ) : (
@@ -31,7 +33,7 @@ export default function Home() {
           </p>
           <div className="w-full flex items-center justify-center">
             <div className="w-1/2 pt-4">
-              <MyDropzone onMessagesParsed={handleMessagesParsed} />
+              <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
             </div>
           </div>
         </div>
