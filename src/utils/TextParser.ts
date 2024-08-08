@@ -9,36 +9,40 @@ export interface TopWordsBySender {
   [senderSlug: string]: WordFrequency[];
 }
 
+interface DailyWordsBySender {
+  [sender: string]: {
+    [date: string]: number;
+  };
+}
+
+const multimediaRegex = /[<>]/;
+const wordRegex =
+  /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
+
+function extractWords(message: string): string[] {
+  return message
+    .replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, "")
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 4);
+}
+
 export function GetTopWordsBySender(
-  data: WhatsAppMessages[],
+  messages: WhatsAppMessages[],
   limit = 10
 ): TopWordsBySender {
   const results: TopWordsBySender = {};
 
-  data.forEach((person) => {
+  messages.forEach((person) => {
     const wordCounts: Record<string, number> = {};
 
     person.messages.forEach((msg) => {
-      const regex = /[<>]/;
-      if (!regex.test(msg.message)) {
-        const words = msg.message
-          .replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, "")
-          .toLowerCase()
-          .split(/\s+/)
-          .filter(
-            (word) =>
-              word.length > 4 &&
-              /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g.test(
-                word
-              )
-          );
+      if (!multimediaRegex.test(msg.message)) {
+        const words = extractWords(msg.message);
 
         words.forEach((word) => {
           if (word) {
-            if (!wordCounts[word]) {
-              wordCounts[word] = 0;
-            }
-            wordCounts[word]++;
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
           }
         });
       }
@@ -47,7 +51,7 @@ export function GetTopWordsBySender(
     const topWords = Object.entries(wordCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, limit)
-      .map((entry) => ({ word: entry[0], frequency: entry[1] }));
+      .map(([word, frequency]) => ({ word, frequency }));
 
     results[person.sender_slug] = topWords;
   });
