@@ -2,9 +2,6 @@
 
 import * as React from "react";
 import {
-  Area,
-  AreaChart,
-  CartesianGrid,
   XAxis,
   YAxis,
   ResponsiveContainer,
@@ -13,6 +10,7 @@ import {
   LabelList,
 } from "recharts";
 import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
+import { GetTopWordsBySender } from "@/utils/TextParser";
 
 import {
   Card,
@@ -25,67 +23,11 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
-interface WordFrequency {
-  word: string;
-  frequency: number;
-}
-
-interface TopWordsBySender {
-  [senderSlug: string]: WordFrequency[];
-}
-
-function getTopWordsBySender(data: WhatsAppMessages[]): TopWordsBySender {
-  const results: TopWordsBySender = {};
-
-  data.forEach((person) => {
-    const wordCounts: Record<string, number> = {};
-
-    person.messages.forEach((msg) => {
-      const regex = /[<>]/;
-      if (!regex.test(msg.message)) {
-        const words = msg.message
-          .replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, "")
-          .toLowerCase()
-          .split(/\s+/)
-          .filter((word) => word.length > 4 && /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g.test(word));
-
-        words.forEach((word) => {
-          if (word) {
-            if (!wordCounts[word]) {
-              wordCounts[word] = 0;
-            }
-            wordCounts[word]++;
-          }
-        });
-      }
-    });
-
-    const topWords = Object.entries(wordCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map((entry) => ({ word: entry[0], frequency: entry[1] }));
-
-    results[person.sender_slug] = topWords;
-  });
-
-  return results;
-}
 
 export default function MostUsedWords({
   messages,
@@ -118,7 +60,7 @@ export default function MostUsedWords({
 
   const senders = Object.keys(chartConfig);
 
-  const wordFrequencies = getTopWordsBySender(messages);
+  const wordFrequencies = GetTopWordsBySender(messages);
   const [selectedSender] = React.useState(senders[0]);
 
   const chartData = React.useMemo(() => {
@@ -186,7 +128,7 @@ export default function MostUsedWords({
                         dataKey="word"
                         position="insideLeft"
                         offset={8}
-                        className="fill-[--color-label] capitalize"
+                        className={`fill-[${chartConfig[sender_slug].color}] mix-blend-color-dodge`}
                         fontSize={12}
                       />
                       <LabelList
