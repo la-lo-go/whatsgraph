@@ -58,3 +58,27 @@ export function GetTopWordsBySender(
 
   return results;
 }
+
+export function GetDailyWordsBySender(
+  messages: WhatsAppMessages[]
+): DailyWordsBySender {
+  const results: DailyWordsBySender = {};
+
+  messages.forEach((person) => {
+    const wordCounts: Record<string, number> = {};
+
+    person.messages.forEach((msg) => {
+      const date = msg.date.split(" ")[0];
+
+      if (!multimediaRegex.test(msg.message)) {
+        const words = extractWords(msg.message);
+
+        wordCounts[date] = (wordCounts[date] || 0) + words.length;
+      }
+    });
+
+    results[person.sender_slug] = wordCounts;
+  });
+
+  return results;
+}
