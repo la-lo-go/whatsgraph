@@ -66,9 +66,8 @@ export function GetDailyWordsBySender(
 
   messages.forEach((person) => {
     const wordCounts: Record<string, number> = {};
-
     person.messages.forEach((msg) => {
-      const date = msg.date.split(" ")[0];
+      const date = msg.date.toISOString().split('T')[0];
 
       if (!multimediaRegex.test(msg.message)) {
         const words = extractWords(msg.message);
