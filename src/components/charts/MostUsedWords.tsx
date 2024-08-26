@@ -31,8 +31,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function MostUsedWords({
   messages,
+  selectedSender,
+  onSenderChange,
 }: {
   messages: WhatsAppMessages[];
+  selectedSender: string | null;
+  onSenderChange: (sender: string | null) => void;
 }) {
   const chartConfig = React.useMemo(() => {
     const colors = [
@@ -61,14 +65,13 @@ export default function MostUsedWords({
   const senders = Object.keys(chartConfig);
 
   const wordFrequencies = GetTopWordsBySender(messages);
-  const [selectedSender] = React.useState(senders[0]);
 
   const chartData = React.useMemo(() => {
-    return wordFrequencies[selectedSender].map((word) => ({
+    return wordFrequencies[selectedSender || senders[0]].map((word) => ({
       word: word.word,
       frequency: word.frequency,
     }));
-  }, [selectedSender, wordFrequencies]);
+  }, [selectedSender, wordFrequencies, senders]);
 
   return (
     <Card>
@@ -81,7 +84,7 @@ export default function MostUsedWords({
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <Tabs defaultValue={senders[0]}>
+        <Tabs value={selectedSender || senders[0]} onValueChange={onSenderChange}>
           <TabsList>
             {senders.map((sender_slug) => (
               <TabsTrigger key={sender_slug} value={sender_slug}>

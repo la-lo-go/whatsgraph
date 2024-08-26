@@ -53,8 +53,12 @@ function formatDate(date: string, time: string): Date {
 
 export default function MessagesPerDayChart({
   messages,
+  selectedSender,
+  onSenderChange,
 }: {
   messages: WhatsAppMessages[];
+  selectedSender: string | null;
+  onSenderChange: (sender: string | null) => void;
 }) {
   const [timeRange, setTimeRange] = React.useState("all");
   const [ignoreZeroDays, setIgnoreZeroDays] = React.useState(true);
@@ -208,7 +212,7 @@ export default function MessagesPerDayChart({
           </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <Tabs defaultValue="all">
+        <Tabs value={selectedSender || "all"} onValueChange={(value) => onSenderChange(value === "all" ? null : value)}>
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
             {senders.map((sender_slug) => (
