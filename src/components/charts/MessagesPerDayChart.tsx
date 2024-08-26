@@ -175,7 +175,7 @@ export default function MessagesPerDayChart({
             Showing total messages for each sender in the selected time range
           </CardDescription>
         </div>
-        <div className="flex flex-col gap-2 sm:items-center gap-3">
+        <div className="flex flex-col gap-2 sm:items-center">
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger
                 className="rounded-lg"
