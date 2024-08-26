@@ -1,4 +1,4 @@
-import ZipManager from '@/utils/ZipManager';
+import {LoadZipContent, GetFirstTxtFileContent} from '@/utils/ZipManager';
 import { ParseWhatsAppMessages, WhatsAppMessages } from '@/utils/WhatsAppMessage';
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
@@ -15,10 +15,9 @@ export default function MyDropzone({ onMessagesParsed }: MyDropzoneProps) {
     onMessagesParsed(messages);
   }, [onMessagesParsed]);
 
-  const handleZipFile = useCallback(async (binaryStr: ArrayBuffer) => {
-    const zipManager = new ZipManager();
-    const zipFiles = await zipManager.loadZipContent(binaryStr);
-    const fileText = await zipManager.getFirstTxtFileContent(zipFiles);
+  const handleZipFile = useCallback(async (binaryStr: ArrayBuffer) => {;
+    const zipFiles = await LoadZipContent(binaryStr);
+    const fileText = await GetFirstTxtFileContent(zipFiles);
     if (fileText) {
       handleFileContent(fileText);
     } else {

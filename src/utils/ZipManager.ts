@@ -1,26 +1,19 @@
-import JSZip from 'jszip';
+import {unzip, ZipEntry, setOptions} from 'unzipit';
 
-class ZipManager {
-  private zip: JSZip;
+setOptions({workerURL: 'http://localhost:3000/scripts/unzipit-worker.module.js'});
 
-  constructor() {
-    this.zip = new JSZip();
-  }
-
-  async loadZipContent(binaryStr: ArrayBuffer): Promise<JSZip.JSZipObject[]> {
-    const zipContent = await this.zip.loadAsync(binaryStr);
-    console.info('Zip content:', zipContent);
-    return Object.values(zipContent.files);
-  }
-
-  async getFirstTxtFileContent(files: JSZip.JSZipObject[]): Promise<string | null> {
-    const firstTxtFile = files.find((zipFile) => zipFile.name.endsWith('.txt'));
-    if (firstTxtFile) {
-      console.info('Found txt file in Zip:', firstTxtFile);
-      return await firstTxtFile.async('text');
-    }
-    return null;
-  }
+export async function LoadZipContent(binaryStr: ArrayBuffer) {
+  console.log('Loading Zip content...');
+  const zipContent = await unzip(binaryStr);
+  console.info('Zip content:', zipContent);
+  return Object.values(zipContent.entries);
 }
 
-export default ZipManager;
+export async function GetFirstTxtFileContent(files: ZipEntry[]): Promise<string | null> {
+  const firstTxtFile = files.find((zipFile) => zipFile.name.endsWith('.txt'));
+  if (firstTxtFile) {
+    console.info('Found txt file in Zip:', firstTxtFile);
+    return await firstTxtFile.text();
+  }
+  return null;
+}
