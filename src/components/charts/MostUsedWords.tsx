@@ -70,8 +70,6 @@ export default function MostUsedWords({
     }));
   }, [selectedSender, wordFrequencies]);
 
-  console.log(chartData);
-
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b sm:flex-row">

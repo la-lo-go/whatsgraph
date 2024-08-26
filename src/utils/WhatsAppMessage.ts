@@ -3,36 +3,47 @@ export interface WhatsAppMessages {
     sender_slug: string;
     messages: {
         message: string;
-        date: string;
-        time: string;
+        date: Date;
     }[];
 }
 
+interface Message {
+    sender: string;
+    message: string;
+    date: Date;
+}
+
 export function ParseWhatsAppMessages(input: string): WhatsAppMessages[] {
-    const messages: { sender: string; message: string; date: string; time: string }[] = [];
+    const messages: Message[] = [];
     const lines = input.split('\n');
 
-    const messageRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}), (\d{1,2}:\d{2}) - (.*?): (.*)$/;
+    const messageRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s(\d{1,2}:\d{2})(?:\s-\s|\s–\s)(.*?):\s(.*)$/;
 
     for (const line of lines) {
         const match = line.match(messageRegex);
         if (match) {
             const [_, date, time, sender, message] = match;
-            const formattedDate = formatDate(date);
-            messages.push({ date: formattedDate, time, sender: sender, message });
+            const formattedDate = formatDate(date, time);
+            if (formattedDate) {
+                messages.push({ sender, message, date: formattedDate });
+            }
         }
     }
 
     return groupMessagesBySender(messages);
 }
 
-function formatDate(date: string): string {
-    const [month, day, year] = date.split('/');
-    const yy = year.length === 4 ? year.slice(2) : year;
-    return `${yy}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+function formatDate(date: string, time: string): Date | null {
+    const [day, month, year] = date.split('/');
+    const yyyy = year.length === 2 ? `20${year}` : year;
+    const [hours, minutes] = time.split(':');
+    
+    const formattedDate = new Date(`${yyyy}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hours.padStart(2, '0')}:${minutes}:00`);
+    
+    return isNaN(formattedDate.getTime()) ? null : formattedDate;
 }
 
-function groupMessagesBySender(messages: { sender: string; message: string; date: string; time: string }[]): WhatsAppMessages[] {
+function groupMessagesBySender(messages: Message[]): WhatsAppMessages[] {
     const groupedMessages = new Map<string, WhatsAppMessages>();
 
     for (const message of messages) {
@@ -43,7 +54,6 @@ function groupMessagesBySender(messages: { sender: string; message: string; date
         groupedMessages.get(message.sender)!.messages.push({
             message: message.message,
             date: message.date,
-            time: message.time,
         });
     }
 

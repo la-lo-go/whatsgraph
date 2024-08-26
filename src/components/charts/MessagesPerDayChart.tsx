@@ -37,17 +37,27 @@ import {
 } from "@/components/ui/select";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface MessageCountData {
   date: string;
   [sender_slug: string]: number | string;
 }
+
+function formatDate(date: string, time: string): Date {
+  const [day, month, year] = date.split('/');
+  const yyyy = year.length === 2 ? `20${year}` : year;
+  return new Date(`${yyyy}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}:00`);
+}
+
 export default function MessagesPerDayChart({
   messages,
 }: {
   messages: WhatsAppMessages[];
 }) {
   const [timeRange, setTimeRange] = React.useState("all");
+  const [ignoreZeroDays, setIgnoreZeroDays] = React.useState(true);
 
   const processData = (messages: WhatsAppMessages[]): MessageCountData[] => {
     const countByDate: { [key: string]: { [key: string]: number } } = {};
@@ -56,15 +66,16 @@ export default function MessagesPerDayChart({
     messages.forEach(({ sender_slug, messages }) => {
       senderSlugs.add(sender_slug);
       messages.forEach((message) => {
-        if (!countByDate[message.date]) {
-          countByDate[message.date] = {};
+        const dateString = message.date.toISOString().split('T')[0];
+        if (!countByDate[dateString]) {
+          countByDate[dateString] = {};
         }
-        countByDate[message.date][sender_slug] =
-          (countByDate[message.date][sender_slug] || 0) + 1;
+        countByDate[dateString][sender_slug] =
+          (countByDate[dateString][sender_slug] || 0) + 1;
       });
     });
 
-    return Object.entries(countByDate).map(([date, senderCounts]) => ({
+    let processedData = Object.entries(countByDate).map(([date, senderCounts]) => ({
       date,
       ...Object.fromEntries(
         Array.from(senderSlugs).map((sender_slug) => [
@@ -73,9 +84,33 @@ export default function MessagesPerDayChart({
         ])
       ),
     }));
+
+    if (!ignoreZeroDays) {
+      const allDates = getDatesInRange(processedData);
+      processedData = allDates.map(date => {
+        return countByDate[date] 
+          ? { date, ...countByDate[date] }
+          : { date, ...Object.fromEntries(Array.from(senderSlugs).map(slug => [slug, 0])) };
+      });
+    }
+
+    return processedData;
   };
 
-  const chartData = React.useMemo(() => processData(messages), [messages]);
+  const getDatesInRange = (data: MessageCountData[]): string[] => {
+    const dates = data.map(item => new Date(item.date));
+    const minDate = new Date(Math.min(...dates.map(date => date.getTime())));
+    const maxDate = new Date(Math.max(...dates.map(date => date.getTime())));
+    const allDates: string[] = [];
+
+    for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+      allDates.push(d.toISOString().split('T')[0]);
+    }
+
+    return allDates;
+  };
+
+  const chartData = React.useMemo(() => processData(messages), [messages, ignoreZeroDays]);
 
   const chartConfig = React.useMemo(() => {
     const colors = [
@@ -113,15 +148,18 @@ export default function MessagesPerDayChart({
       cutoffDate = new Date(now.setMonth(now.getMonth() - 6));
     } else if (timeRange === "1m") {
       cutoffDate = new Date(now.setMonth(now.getMonth() - 1));
+    } else if (timeRange === "1w") {
+      cutoffDate = new Date(now.setDate(now.getDate() - 7));
+    } else if (timeRange === "all") {
+      cutoffDate = new Date(0);
     }
 
     return chartData
       .filter((item) => {
-        const [year, month, day] = item.date.split("-").map(Number);
-        const itemDate = new Date(year + 2000, month - 1, day); // Ajustando año a 4 dígitos
+        const itemDate = new Date(item.date);
         return itemDate >= cutoffDate;
       })
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [chartData, timeRange]);
 
   return (
@@ -133,28 +171,41 @@ export default function MessagesPerDayChart({
             Showing total messages for each sender in the selected time range
           </CardDescription>
         </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger
-            className="w-[160px] rounded-lg sm:ml-auto"
-            aria-label="Select time range"
-          >
-            <SelectValue placeholder="All" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="all" className="rounded-lg">
-              All
-            </SelectItem>
-            <SelectItem value="1y" className="rounded-lg">
-              Last year
-            </SelectItem>
-            <SelectItem value="6m" className="rounded-lg">
-              Last 6 months
-            </SelectItem>
-            <SelectItem value="1m" className="rounded-lg">
-              Last month
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-col gap-2 sm:items-center gap-3">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger
+                className="rounded-lg"
+                aria-label="Select time range"
+              >
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="all" className="rounded-lg">
+                  All
+                </SelectItem>
+                <SelectItem value="1y" className="rounded-lg">
+                  Last year
+                </SelectItem>
+                <SelectItem value="6m" className="rounded-lg">
+                  Last 6 months
+                </SelectItem>
+                <SelectItem value="1m" className="rounded-lg">
+                  Last month
+                </SelectItem>
+                <SelectItem value="1w" className="rounded-lg">
+                  Last week
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="ignore-zero-days"
+                checked={ignoreZeroDays}
+                onCheckedChange={setIgnoreZeroDays}
+              />
+              <Label htmlFor="ignore-zero-days">Ignore 0 messages days</Label>
+            </div>
+          </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <Tabs defaultValue="all">
@@ -206,8 +257,8 @@ export default function MessagesPerDayChart({
                     tickMargin={8}
                     minTickGap={32}
                     tickFormatter={(value) => {
-                      const [year, month, day] = value.split("-");
-                      return `${day}/${month}/${year}`;
+                      const date = new Date(value);
+                      return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     }}
                   />
                   <YAxis
@@ -221,8 +272,8 @@ export default function MessagesPerDayChart({
                     content={
                       <ChartTooltipContent
                         labelFormatter={(value) => {
-                          const [year, month, day] = value.split("-");
-                          return `${day}/${month}/${year}`;
+                          const date = new Date(value);
+                          return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                         }}
                         indicator="dot"
                       />
@@ -286,8 +337,8 @@ export default function MessagesPerDayChart({
                       tickMargin={8}
                       minTickGap={32}
                       tickFormatter={(value) => {
-                        const [year, month, day] = value.split("-");
-                        return `${day}/${month}/${year}`;
+                        const date = new Date(value);
+                        return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                       }}
                     />
                     <YAxis
@@ -301,8 +352,8 @@ export default function MessagesPerDayChart({
                       content={
                         <ChartTooltipContent
                           labelFormatter={(value) => {
-                            const [year, month, day] = value.split("-");
-                            return `${day}/${month}/${year}`;
+                            const date = new Date(value);
+                            return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
                           }}
                           indicator="dot"
                         />
