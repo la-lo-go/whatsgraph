@@ -61,10 +61,10 @@ export default function ActivityDistributionChart({
 
     switch (timeUnit) {
       case "monthly":
-        keys = Array(12).fill(0).map((_, index) => 
-          new Date(2000, index, 1).toLocaleString('default', { month: 'short' })
+        keys = Array(12).fill(0).map((_, index) =>
+          new Date(2000, index, 1).toLocaleString('en-US', { month: 'short' })
         );
-        getKey = (date) => new Date(date).toLocaleString('default', { month: 'short' });
+        getKey = (date) => new Date(date).toLocaleString('en-US', { month: 'short' });
         break;
       case "weekly":
         keys = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

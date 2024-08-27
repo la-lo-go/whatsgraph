@@ -15,18 +15,14 @@ interface Message {
 
 export function ParseWhatsAppMessages(input: string): WhatsAppMessages[] {
     const messages: Message[] = [];
-    const lines = input.split('\n');
+    const messageRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s(\d{1,2}:\d{2})(?:\s-\s|\s–\s)(.*?):\s(.*)$/gm;
+    let match;
 
-    const messageRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s(\d{1,2}:\d{2})(?:\s-\s|\s–\s)(.*?):\s(.*)$/;
-
-    for (const line of lines) {
-        const match = line.match(messageRegex);
-        if (match) {
-            const [_, date, time, sender, message] = match;
-            const formattedDate = formatDate(date, time);
-            if (formattedDate) {
-                messages.push({ sender, message, date: formattedDate });
-            }
+    while ((match = messageRegex.exec(input)) !== null) {
+        const [_, date, time, sender, message] = match;
+        const formattedDate = formatDate(date, time);
+        if (formattedDate) {
+            messages.push({ sender, message, date: formattedDate });
         }
     }
 

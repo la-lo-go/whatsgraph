@@ -10,7 +10,7 @@ export default function WeeklyActivity({
     <ActivityDistributionChart
       messages={messages}
       timeUnit="weekly"
-      title="Weekly"
+      title="Day of Week"
     />
   );
 }

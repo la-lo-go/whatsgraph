@@ -2,19 +2,21 @@
 
 import * as React from "react";
 import {
-  Area,
-  AreaChart,
   CartesianGrid,
+  Line,
+  LineChart,
   XAxis,
   YAxis,
   ResponsiveContainer,
 } from "recharts";
+import { TrendingUp } from "lucide-react";
 import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,8 +24,6 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -92,7 +92,7 @@ export default function MessagesPerDayChart({
     if (!ignoreZeroDays) {
       const allDates = getDatesInRange(processedData);
       processedData = allDates.map(date => {
-        return countByDate[date] 
+        return countByDate[date]
           ? { date, ...countByDate[date] }
           : { date, ...Object.fromEntries(Array.from(senderSlugs).map(slug => [slug, 0])) };
       });
@@ -176,40 +176,40 @@ export default function MessagesPerDayChart({
           </CardDescription>
         </div>
         <div className="flex flex-col gap-2 sm:items-center">
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger
-                className="rounded-lg"
-                aria-label="Select time range"
-              >
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl">
-                <SelectItem value="all" className="rounded-lg">
-                  All
-                </SelectItem>
-                <SelectItem value="1y" className="rounded-lg">
-                  Last year
-                </SelectItem>
-                <SelectItem value="6m" className="rounded-lg">
-                  Last 6 months
-                </SelectItem>
-                <SelectItem value="1m" className="rounded-lg">
-                  Last month
-                </SelectItem>
-                <SelectItem value="1w" className="rounded-lg">
-                  Last week
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="ignore-zero-days"
-                checked={ignoreZeroDays}
-                onCheckedChange={setIgnoreZeroDays}
-              />
-              <Label htmlFor="ignore-zero-days">Ignore 0 messages days</Label>
-            </div>
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger
+              className="rounded-lg"
+              aria-label="Select time range"
+            >
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all" className="rounded-lg">
+                All
+              </SelectItem>
+              <SelectItem value="1y" className="rounded-lg">
+                Last year
+              </SelectItem>
+              <SelectItem value="6m" className="rounded-lg">
+                Last 6 months
+              </SelectItem>
+              <SelectItem value="1m" className="rounded-lg">
+                Last month
+              </SelectItem>
+              <SelectItem value="1w" className="rounded-lg">
+                Last week
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="ignore-zero-days"
+              checked={ignoreZeroDays}
+              onCheckedChange={setIgnoreZeroDays}
+            />
+            <Label htmlFor="ignore-zero-days">Ignore 0 messages days</Label>
           </div>
+        </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <Tabs value={selectedSender || "all"} onValueChange={(value) => onSenderChange(value === "all" ? null : value)}>
@@ -229,30 +229,7 @@ export default function MessagesPerDayChart({
               className="aspect-auto h-[250px] w-full"
             >
               <ResponsiveContainer>
-                <AreaChart data={filteredData}>
-                  <defs>
-                    {senders.map((sender_slug) => (
-                      <linearGradient
-                        key={sender_slug}
-                        id={`fill${sender_slug}`}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor={chartConfig[sender_slug].color}
-                          stopOpacity={0.8}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor={chartConfig[sender_slug].color}
-                          stopOpacity={0.1}
-                        />
-                      </linearGradient>
-                    ))}
-                  </defs>
+                <LineChart data={filteredData}>
                   <CartesianGrid vertical={false} />
                   <XAxis
                     dataKey="date"
@@ -284,17 +261,16 @@ export default function MessagesPerDayChart({
                     }
                   />
                   {senders.map((sender_slug) => (
-                    <Area
+                    <Line
                       key={sender_slug}
                       dataKey={sender_slug}
                       type="monotone"
-                      fill={`url(#fill${sender_slug})`}
                       stroke={chartConfig[sender_slug].color}
-                      stackId="1"
+                      strokeWidth={2}
+                      dot={false}
                     />
                   ))}
-                  <ChartLegend content={<ChartLegendContent />} />
-                </AreaChart>
+                </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
           </TabsContent>
@@ -307,32 +283,12 @@ export default function MessagesPerDayChart({
                 className="aspect-auto h-[250px] w-full"
               >
                 <ResponsiveContainer>
-                  <AreaChart
+                  <LineChart
                     data={filteredData.map((item) => ({
                       date: item.date,
                       [sender_slug]: item[sender_slug],
                     }))}
                   >
-                    <defs>
-                      <linearGradient
-                        id={`fill${sender_slug}`}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor={chartConfig[sender_slug].color}
-                          stopOpacity={0.8}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor={chartConfig[sender_slug].color}
-                          stopOpacity={0.1}
-                        />
-                      </linearGradient>
-                    </defs>
                     <CartesianGrid vertical={false} />
                     <XAxis
                       dataKey="date"
@@ -363,21 +319,32 @@ export default function MessagesPerDayChart({
                         />
                       }
                     />
-                    <Area
+                    <Line
                       dataKey={sender_slug}
                       type="monotone"
-                      fill={`url(#fill${sender_slug})`}
                       stroke={chartConfig[sender_slug].color}
-                      stackId="1"
+                      strokeWidth={2}
+                      dot={false}
                     />
-                    <ChartLegend content={<ChartLegendContent />} />
-                  </AreaChart>
+                  </LineChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </TabsContent>
           ))}
         </Tabs>
       </CardContent>
+      <CardFooter>
+        <div className="flex w-full items-start gap-2 text-sm">
+          <div className="grid gap-2">
+            <div className="flex items-center gap-2 font-medium leading-none">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="flex items-center gap-2 leading-none text-muted-foreground">
+              Showing total messages for each sender in the selected time range
+            </div>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   );
 }

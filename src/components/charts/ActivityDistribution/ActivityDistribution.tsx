@@ -52,7 +52,7 @@ export default function ActivityDistribution({
     <Card>
       <CardHeader>
         <CardTitle>Activity Distribution</CardTitle>
-        <CardDescription>Message distribution by month, week, and hour</CardDescription>
+        <CardDescription>Message distribution by month, day of week, and hour</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap justify-center gap-4">

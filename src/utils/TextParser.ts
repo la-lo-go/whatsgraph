@@ -81,3 +81,48 @@ export function GetDailyWordsBySender(
 
   return results;
 }
+
+export interface EmojiFrequency {
+  emoji: string;
+  frequency: number;
+}
+
+export interface TopEmojisBySender {
+  [senderSlug: string]: EmojiFrequency[];
+}
+
+const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\p{Emoji_Modifier})?/gu;
+
+function extractEmojis(message: string): string[] {
+  return Array.from(message.matchAll(emojiRegex), m => m[0]);
+}
+
+export function GetTopEmojisBySender(
+  messages: WhatsAppMessages[],
+  limit = 10
+): TopEmojisBySender {
+  const results: TopEmojisBySender = {};
+
+  messages.forEach((person) => {
+    const emojiCounts: Record<string, number> = {};
+
+    person.messages.forEach((msg) => {
+      if (!multimediaRegex.test(msg.message)) {
+        const emojis = extractEmojis(msg.message);
+
+        emojis.forEach((emoji) => {
+          emojiCounts[emoji] = (emojiCounts[emoji] || 0) + 1;
+        });
+      }
+    });
+
+    const topEmojis = Object.entries(emojiCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([emoji, frequency]) => ({ emoji, frequency }));
+
+    results[person.sender_slug] = topEmojis;
+  });
+
+  return results;
+}
