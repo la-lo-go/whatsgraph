@@ -104,7 +104,7 @@ export default function MostUsedWords({
                     accessibilityLayer
                     data={wordFrequencies[sender_slug]}
                     layout="vertical"
-                    margin={{ right: 30 }}
+                    margin={{ left: 5, right: 30 }}
                   >
                     <XAxis type="number" dataKey="frequency" hide />
                     <YAxis
