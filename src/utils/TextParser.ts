@@ -91,7 +91,7 @@ export interface TopEmojisBySender {
   [senderSlug: string]: EmojiFrequency[];
 }
 
-const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\p{Emoji_Modifier})?/gu;
+const emojiRegex = /(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\p{Emoji_Modifier})?(?:\u200D(?:\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\p{Emoji_Modifier})?)*(?:\uFE0F)?/gu;
 
 function extractEmojis(message: string): string[] {
   return Array.from(message.matchAll(emojiRegex), m => m[0]);
