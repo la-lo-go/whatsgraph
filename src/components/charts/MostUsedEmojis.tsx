@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   XAxis,
@@ -10,7 +8,7 @@ import {
   LabelList,
 } from "recharts";
 import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
-import { GetTopWordsBySender } from "@/utils/TextParser";
+import { GetTopEmojisBySender } from "@/utils/TextParser";
 
 import {
   Card,
@@ -28,8 +26,9 @@ import {
 } from "@/components/ui/chart";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Bold } from "lucide-react";
 
-export default function MostUsedWords({
+export default function MostUsedEmojis({
   messages,
   selectedSender,
   onSenderChange,
@@ -64,22 +63,22 @@ export default function MostUsedWords({
 
   const senders = Object.keys(chartConfig);
 
-  const wordFrequencies = GetTopWordsBySender(messages);
+  const emojiFrequencies = GetTopEmojisBySender(messages);
 
   const chartData = React.useMemo(() => {
-    return wordFrequencies[selectedSender || senders[0]].map((word) => ({
-      word: word.word,
-      frequency: word.frequency,
+    return emojiFrequencies[selectedSender || senders[0]].map((emoji) => ({
+      emoji: emoji.emoji,
+      frequency: emoji.frequency,
     }));
-  }, [selectedSender, wordFrequencies, senders]);
+  }, [selectedSender, emojiFrequencies, senders]);
 
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Most Used Words</CardTitle>
+          <CardTitle>Most Used Emojis</CardTitle>
           <CardDescription>
-            Select a sender to view their most used words
+            Select a sender to view their most used emojis
           </CardDescription>
         </div>
       </CardHeader>
@@ -102,18 +101,18 @@ export default function MostUsedWords({
                 <ResponsiveContainer>
                   <BarChart
                     accessibilityLayer
-                    data={wordFrequencies[sender_slug]}
+                    data={emojiFrequencies[sender_slug]}
                     layout="vertical"
                     margin={{ right: 30 }}
+                    barGap={10}
                   >
                     <XAxis type="number" dataKey="frequency" hide />
                     <YAxis
-                      dataKey="word"
+                      dataKey="emoji"
                       type="category"
                       tickLine={false}
                       tickMargin={10}
                       axisLine={false}
-                      fontWeight={"bold"}
                     />
                     <ChartTooltip
                       cursor={false}
@@ -131,7 +130,6 @@ export default function MostUsedWords({
                         offset={8}
                         className="fill-foreground"
                         fontSize={12}
-                        fontWeight={"semibold"}
                       />
                     </Bar>
                   </BarChart>
