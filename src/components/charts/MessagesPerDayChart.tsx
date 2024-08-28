@@ -266,7 +266,7 @@ export default function MessagesPerDayChart({
                       dataKey={sender_slug}
                       type="monotone"
                       stroke={chartConfig[sender_slug].color}
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       dot={false}
                     />
                   ))}
@@ -323,7 +323,7 @@ export default function MessagesPerDayChart({
                       dataKey={sender_slug}
                       type="monotone"
                       stroke={chartConfig[sender_slug].color}
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                       dot={false}
                     />
                   </LineChart>
