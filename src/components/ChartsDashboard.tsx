@@ -5,6 +5,7 @@ import MostUsedWords from "@/components/charts/MostUsedWords"
 import YearlyActivity from "@/components/charts/YearlyActivity"
 import ActivityDistribution from "@/components/charts/ActivityDistribution/ActivityDistribution"
 import MostUsedEmojis from "@/components/charts/MostUsedEmojis"
+import { MonthlyWordCount } from "@/components/charts/MonthlyWordCount";
 
 interface ChartsDashboardProps {
   messages: WhatsAppMessages[];
@@ -21,6 +22,7 @@ export default function ChartsDashboard({ messages }: ChartsDashboardProps) {
     <div className="flex flex-col gap-4">
       <MessagesPerDayChart messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
       <ActivityDistribution messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
+      <MonthlyWordCount messages={messages} />
       <YearlyActivity messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
       <MostUsed messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
     </div>
