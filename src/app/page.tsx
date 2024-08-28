@@ -4,6 +4,7 @@ import { useState } from "react";
 import MyDropzone from "@/components/Dropzone";
 import ChartsDashboard from "@/components/ChartsDashboard";
 import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
+import { Shield } from "lucide-react";
 
 export default function Home() {
   const [messages, setMessages] = useState<WhatsAppMessages[] | null>(null);
@@ -24,6 +25,7 @@ export default function Home() {
           <div className="flex justify-center">
             <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
           </div>
+          <PrivacyNotice />
         </div>
       ) : (
         <div className="w-full">
@@ -39,5 +41,17 @@ export default function Home() {
         </div>
       )}
     </main>
+  );
+}
+
+function PrivacyNotice() {
+  return (
+    <div className="bg-secondary rounded-xl p-4 mt-4 flex items-center">
+      <Shield className="text-primary mr-2" size={40} />
+      <p className="text-sm text-muted-foreground">
+        Your privacy is important. 
+        All data processing occurs in your browser, and no information is sent to any server.
+      </p>
+    </div>
   );
 }
