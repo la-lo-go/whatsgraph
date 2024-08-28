@@ -27,6 +27,7 @@ WhatsGraph is a web application that allows users to easily visualize their What
 - React
 - TypeScript
 - Tailwind CSS
+- [Shadcn](https://ui.shadcn.com/) for UI components
 - Recharts for data visualization
 
 ## Getting Started
