@@ -81,8 +81,6 @@ export default function YearlyActivity({
 
   const chartData = React.useMemo(() => processData(), [processData]);
 
-  const senders = Object.keys(chartConfig);
-
   return (
     <Card>
       <CardHeader>
@@ -93,7 +91,7 @@ export default function YearlyActivity({
         <div className="flex flex-wrap justify-center gap-4">
           {Object.entries(chartData).map(([year, data]) => (
             <div key={year} className="mb-8">
-              <h3 className="text-lg font-semibold mb-2">{year}</h3>
+              <h3 className="text-lg font-semibold mb-2 text-center">{year}</h3>
               <ChartContainer config={chartConfig} className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart data={data}>
