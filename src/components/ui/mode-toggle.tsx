@@ -18,7 +18,7 @@ export function ModeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="fixed top-3 right-3 z-50 rounded-xl"
+      className="rounded-xl"
     >
       {theme === "light" ? (
         <Sun/>

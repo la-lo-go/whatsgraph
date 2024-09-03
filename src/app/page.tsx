@@ -16,31 +16,27 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between px-20 p-8 max-lg:px-4">
+    <div className="container mx-auto px-4 py-8">
       {!messages ? (
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md mx-auto">
           <h1 className="text-2xl font-bold mb-4 text-center">
             Upload your WhatsApp chat history to visualize it!
           </h1>
-          <div className="flex justify-center">
-            <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
-          </div>
+          <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
           <PrivacyNotice />
         </div>
       ) : (
         <div className="w-full">
           <ChartsDashboard messages={messages} />
           <p className="mt-4 text-center">
-            Total of messages analyzed: {messages.reduce((acc, curr) => acc + curr.messages.length, 0)}
+            Total messages analyzed: {messages.reduce((acc, curr) => acc + curr.messages.length, 0)}
           </p>
-          <div className="w-full flex items-center justify-center">
-            <div className="w-1/2 pt-4">
-              <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
-            </div>
+          <div className="w-full max-w-md mx-auto mt-8">
+            <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }
 

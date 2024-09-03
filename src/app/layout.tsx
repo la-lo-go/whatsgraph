@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ui/theme-provider";
-import { ModeToggle } from "@/components/ui/mode-toggle";
+import { Navbar } from "@/components/ui/navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,18 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <link rel="icon" href="/favicon.svg" />
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ModeToggle />
-          {children}
-        </ThemeProvider>
-      </body>
-    </html>
-  );
-}
+          <Navbar />
+          <main className="flex min-h-screen flex-col items-center justify-between px-20 p-8 max-lg:px-4">
+            {children}
+          </main>
+        </body>
+      </html>
+    );
+  }
