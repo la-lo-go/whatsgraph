@@ -14,23 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  ChartConfig,
-} from "@/components/ui/chart";
-
-import { CreateChartConfig } from "@/utils/ChartConfig";
-
 export default function ActivityDistribution({
   messages,
-  selectedSender,
-  onSenderChange,
 }: {
   messages: WhatsAppMessages[];
-  selectedSender: string | null;
-  onSenderChange: (sender: string | null) => void;
 }) {
-  const chartConfig = React.useMemo(() => CreateChartConfig(messages), [messages]) as ChartConfig;
-
   return (
     <Card>
       <CardHeader>

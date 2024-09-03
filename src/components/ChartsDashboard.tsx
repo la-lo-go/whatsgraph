@@ -21,7 +21,7 @@ export default function ChartsDashboard({ messages }: ChartsDashboardProps) {
   return (
     <div className="flex flex-col gap-4">
       <MessagesPerDayChart messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
-      <ActivityDistribution messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
+      <ActivityDistribution messages={messages} />
       <MonthlyWordCount messages={messages} />
       <YearlyActivity messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
       <MostUsed messages={messages} selectedSender={selectedSender} onSenderChange={handleSenderChange} />
