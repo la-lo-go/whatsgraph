@@ -27,10 +27,15 @@ export default function Home() {
         </div>
       ) : (
         <div className="w-full">
-          <ChartsDashboard messages={messages} />
-          <p className="mt-4 text-center">
-            Total messages analyzed: {messages.reduce((acc, curr) => acc + curr.messages.length, 0)}
+          <p className="mb-4 text-center">
+          {(() => {
+            const totalMensagens = messages.reduce(function(total, currentMessage) {
+              return total + currentMessage.messages.length;
+            }, 0);
+            return `${totalMensagens.toLocaleString()} messages analysed  📊`;
+          })()}
           </p>
+          <ChartsDashboard messages={messages} />
           <div className="w-full max-w-md mx-auto mt-8">
             <MyDropzone key={dropzoneKey} onMessagesParsed={handleMessagesParsed} />
           </div>
