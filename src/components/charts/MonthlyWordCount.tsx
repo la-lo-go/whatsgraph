@@ -23,12 +23,15 @@ import {
 
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { CreateChartConfig } from "@/utils/ChartConfig"
 
 interface MonthlyWordCountProps {
   messages: WhatsAppMessages[]
 }
 
 export function MonthlyWordCount({ messages }: MonthlyWordCountProps) {
+  const chartConfig = React.useMemo(() => CreateChartConfig(messages), [messages]) as ChartConfig;
+
   const [showAllMonths, setShowAllMonths] = React.useState(false);
 
   const chartData = useMemo(() => {
@@ -82,24 +85,6 @@ export function MonthlyWordCount({ messages }: MonthlyWordCountProps) {
 
     return processedData.sort((a, b) => a.monthYear.localeCompare(b.monthYear));
   }, [messages, showAllMonths])
-
-  const chartConfig = useMemo(() => {
-    const colors = [
-      "hsl(var(--chart-1))",
-      "hsl(var(--chart-2))",
-      "hsl(var(--chart-3))",
-      "hsl(var(--chart-4))",
-    ]
-    return Object.fromEntries(
-      messages.map((m, index) => [
-        m.sender_slug,
-        {
-          label: m.sender,
-          color: colors[index % colors.length],
-        },
-      ])
-    )
-  }, [messages]) as ChartConfig
 
   const senders = Object.keys(chartConfig)
 

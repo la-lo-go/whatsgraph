@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/chart";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Bold } from "lucide-react";
+import { CreateChartConfig } from "@/utils/ChartConfig";
 
 export default function MostUsedEmojis({
   messages,
@@ -37,29 +37,8 @@ export default function MostUsedEmojis({
   selectedSender: string | null;
   onSenderChange: (sender: string | null) => void;
 }) {
-  const chartConfig = React.useMemo(() => {
-    const colors = [
-      "hsl(var(--chart-1))",
-      "hsl(var(--chart-2))",
-      "hsl(var(--chart-3))",
-      "hsl(var(--chart-4))",
-    ];
-    const config = Object.fromEntries(
-      messages
-        .map((m) => m.sender_slug)
-        .map((sender_slug, index) => [
-          sender_slug,
-          {
-            label:
-              messages.find((m) => m.sender_slug === sender_slug)?.sender ||
-              sender_slug,
-            color: colors[index % colors.length],
-          },
-        ])
-    );
 
-    return config;
-  }, [messages]) as ChartConfig;
+  const chartConfig = React.useMemo(() => CreateChartConfig(messages), [messages]) as ChartConfig;
 
   const senders = Object.keys(chartConfig);
 

@@ -19,6 +19,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
+import { CreateChartConfig } from "@/utils/ChartConfig";
+
 interface ActivityData {
   key: string;
   [sender: string]: number | string;
@@ -37,23 +39,7 @@ export default function ActivityDistributionChart({
   timeUnit,
   title,
 }: ActivityDistributionChartProps) {
-  const chartConfig = React.useMemo(() => {
-    const colors = [
-      "hsl(var(--chart-1))",
-      "hsl(var(--chart-2))",
-      "hsl(var(--chart-3))",
-      "hsl(var(--chart-4))",
-    ];
-    return Object.fromEntries(
-      messages.map((m, index) => [
-        m.sender_slug,
-        {
-          label: m.sender,
-          color: colors[index % colors.length],
-        },
-      ])
-    );
-  }, [messages]) as ChartConfig;
+  const chartConfig = React.useMemo(() => CreateChartConfig(messages), [messages]) as ChartConfig;
 
   const processData = React.useCallback(() => {
     let keys: string[];
