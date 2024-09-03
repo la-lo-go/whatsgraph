@@ -1,16 +1,16 @@
-import ActivityDistributionChart from './ActivityDistributionChart';
-import { WhatsAppMessages } from "@/utils/WhatsAppMessage";
+import ActivityDistributionChart from "./ActivityDistributionChart";
+import type { WhatsAppMessages } from "@/utils/WhatsAppMessage";
 
 export default function HourlyActivity({
-  messages,
+	messages,
 }: {
-  messages: WhatsAppMessages[];
+	messages: WhatsAppMessages[];
 }) {
-  return (
-    <ActivityDistributionChart
-      messages={messages}
-      timeUnit="hourly"
-      title="Hourly"
-    />
-  );
+	return (
+		<ActivityDistributionChart
+			messages={messages}
+			timeUnit="hourly"
+			title="Hourly"
+		/>
+	);
 }
