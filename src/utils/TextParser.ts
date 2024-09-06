@@ -19,7 +19,7 @@ const multimediaRegex = /[<>]/;
 const wordRegex =
 	/^[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]+$/g;
 
-function extractWords(message: string): string[] {
+export function ExtractWords(message: string): string[] {
 	return message
 		.replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, "")
 		.toLowerCase()
@@ -38,7 +38,7 @@ export function GetTopWordsBySender(
 
 		for (const msg of person.messages) {
 			if (!multimediaRegex.test(msg.message)) {
-				const words = extractWords(msg.message);
+				const words = ExtractWords(msg.message);
 
 				for (const word of words) {
 					if (word) {
@@ -70,7 +70,7 @@ export function GetDailyWordsBySender(
 			const date = msg.date.toISOString().split("T")[0];
 
 			if (!multimediaRegex.test(msg.message)) {
-				const words = extractWords(msg.message);
+				const words = ExtractWords(msg.message);
 
 				wordCounts[date] = (wordCounts[date] || 0) + words.length;
 			}

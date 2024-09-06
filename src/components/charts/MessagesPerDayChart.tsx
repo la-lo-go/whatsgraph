@@ -8,6 +8,7 @@ import {
 	XAxis,
 	YAxis,
 	ResponsiveContainer,
+	Legend,
 } from "recharts";
 import type { WhatsAppMessages } from "@/utils/WhatsAppMessage";
 
@@ -136,17 +137,27 @@ export default function MessagesPerDayChart({
 	const senders = Object.keys(chartConfig);
 
 	const filteredData = React.useMemo(() => {
-		const now = new Date();
+		const lastMessageDate = new Date(
+			Math.max(...chartData.map((item) => new Date(item.date).getTime())),
+		);
 		let cutoffDate = new Date(0);
 
 		if (timeRange === "1y") {
-			cutoffDate = new Date(now.setFullYear(now.getFullYear() - 1));
+			cutoffDate = new Date(
+				lastMessageDate.setFullYear(lastMessageDate.getFullYear() - 1),
+			);
 		} else if (timeRange === "6m") {
-			cutoffDate = new Date(now.setMonth(now.getMonth() - 6));
+			cutoffDate = new Date(
+				lastMessageDate.setMonth(lastMessageDate.getMonth() - 6),
+			);
 		} else if (timeRange === "1m") {
-			cutoffDate = new Date(now.setMonth(now.getMonth() - 1));
+			cutoffDate = new Date(
+				lastMessageDate.setMonth(lastMessageDate.getMonth() - 1),
+			);
 		} else if (timeRange === "1w") {
-			cutoffDate = new Date(now.setDate(now.getDate() - 7));
+			cutoffDate = new Date(
+				lastMessageDate.setDate(lastMessageDate.getDate() - 7),
+			);
 		} else if (timeRange === "all") {
 			cutoffDate = new Date(0);
 		}
@@ -160,7 +171,7 @@ export default function MessagesPerDayChart({
 	}, [chartData, timeRange]);
 
 	return (
-		<Card>
+		<Card className="h-full">
 			<CardHeader className="flex items-center gap-2 space-y-0 border-b sm:flex-row">
 				<div className="grid flex-1 gap-1 text-center sm:text-left">
 					<CardTitle>Messages Per Day</CardTitle>
@@ -276,6 +287,7 @@ export default function MessagesPerDayChart({
 											dot={false}
 										/>
 									))}
+									<Legend />
 								</LineChart>
 							</ResponsiveContainer>
 						</ChartContainer>
