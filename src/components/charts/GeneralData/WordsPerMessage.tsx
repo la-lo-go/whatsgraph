@@ -2,54 +2,79 @@
 
 import React, { useMemo } from "react";
 import { MessageSquare } from "lucide-react";
-
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
-
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    Cell,
+} from "recharts";
 import type { WhatsAppMessages } from "@/utils/WhatsAppMessage";
+import { CreateChartConfig } from "@/utils/ChartConfig";
+import { ChartContainer } from "@/components/ui/chart";
 
 export default function WordsPerMessage({
-	messages,
+    messages,
 }: {
-	messages: WhatsAppMessages[];
+    messages: WhatsAppMessages[];
 }) {
-	const averageWordsPerMessage = useMemo(() => {
-		let totalWords = 0;
-		let totalMessages = 0;
+    const chartConfig = CreateChartConfig(messages);
 
-		for (const sender of messages) {
-			for (const msg of sender.messages) {
-				totalWords += msg.message.split(/\s+/).length;
-				totalMessages++;
-			}
-		}
+    const data = useMemo(() => {
+        const result: { sender: string; averageWords: number; color: string; sender_slug: string }[] = [];
 
-		return (totalWords / totalMessages).toFixed(1);
-	}, [messages]);
+        for (const sender of messages) {
+            let totalWords = 0;
+            const totalMessages = sender.messages.length;
 
-	return (
-		<Card className="flex flex-col w-full sm:w-[calc(50%-0.5rem)]">
-			<CardHeader className="items-center pb-2">
-				<CardTitle>Words per Message</CardTitle>
-				<CardDescription>Average word count</CardDescription>
-			</CardHeader>
-			<CardContent className="flex-1 flex items-center justify-center">
-				<div className="text-4xl font-bold">{averageWordsPerMessage}</div>
-			</CardContent>
-			<CardFooter className="flex-col gap-2 text-sm pt-4">
-				<div className="flex items-center gap-2 font-medium leading-none">
-					<MessageSquare className="h-4 w-4" /> Words per message
-				</div>
-				<div className="leading-none text-muted-foreground">
-					Average number of words in each message
-				</div>
-			</CardFooter>
-		</Card>
-	);
+            for (const msg of sender.messages) {
+                totalWords += msg.message.split(/\s+/).length;
+            }
+
+            result.push({
+                sender: sender.sender,
+                averageWords: totalMessages > 0 ? (totalWords / totalMessages) : 0,
+                color: chartConfig[sender.sender_slug]?.color || "#8884d8",
+                sender_slug: sender.sender_slug
+            });
+        }
+
+        console.log(result)
+
+        return result;
+    }, [messages, chartConfig]);
+
+    return (
+        <div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-center sm:w-[calc(50%-0.5rem)]">
+            <h3>Words per message</h3>
+
+            <ChartContainer config={chartConfig} className="mx-auto h-[200px]">
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data}>
+                        <XAxis dataKey="sender" />
+                        <YAxis />
+                        <Tooltip formatter={(value: number) => [value.toFixed(1), "Average Words"]} />
+                        <Bar dataKey="averageWords">
+                            {data.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={chartConfig[entry.sender_slug].color}
+                                />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+            </ChartContainer>
+        </div>
+    );
 }
