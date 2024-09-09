@@ -104,11 +104,11 @@ export default function MessagesPerDayChart({
 				return countByDate[date]
 					? { date, ...countByDate[date] }
 					: {
-							date,
-							...Object.fromEntries(
-								Array.from(senderSlugs).map((slug) => [slug, 0]),
-							),
-						};
+						date,
+						...Object.fromEntries(
+							Array.from(senderSlugs).map((slug) => [slug, 0]),
+						),
+					};
 			});
 		}
 
@@ -222,7 +222,7 @@ export default function MessagesPerDayChart({
 						onSenderChange(value === "all" ? null : value)
 					}
 				>
-					<TabsList>
+					<TabsList className='flex items-center justify-start flex-wrap h-auto space-y-1 w-fit'> 
 						<TabsTrigger value="all">All</TabsTrigger>
 						{senders.map((sender_slug) => (
 							<TabsTrigger key={sender_slug} value={sender_slug}>

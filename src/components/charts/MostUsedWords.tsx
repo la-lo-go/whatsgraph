@@ -70,7 +70,7 @@ export default function MostUsedWords({
 					value={selectedSender || senders[0]}
 					onValueChange={onSenderChange}
 				>
-					<TabsList>
+					<TabsList className='flex items-center justify-start flex-wrap h-auto space-y-1 w-fit'> 
 						{senders.map((sender_slug) => (
 							<TabsTrigger key={sender_slug} value={sender_slug}>
 								{chartConfig[sender_slug].label}
