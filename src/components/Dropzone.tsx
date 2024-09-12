@@ -119,7 +119,7 @@ function DropzoneInstructions() {
 	return (
 		<div className="text-center">
 			<p className="text-gray-500 text-lg">
-				Drag & drop a file here, or click to select a file
+				Drag & drop a file here, or click to select it
 			</p>
 			<p className="text-gray-400 text-sm mt-2">
 				Only .zip and .txt files are accepted. Maximum one file.
