@@ -1,34 +1,27 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Clock } from "lucide-react";
 import {
-	Card,
 	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
 } from "@/components/ui/card";
 import type { WhatsAppMessages } from "@/utils/WhatsAppMessage";
 import {
 	BarChart,
 	Bar,
 	XAxis,
-	YAxis,
 	ResponsiveContainer,
 	Cell,
-	Tooltip,
+	CartesianGrid,
+	LabelList,
 } from "recharts";
 import { CreateChartConfig } from "@/utils/ChartConfig";
-import { ChartContainer } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Slider } from "@/components/ui/slider";
 
 const formatTime = (seconds: number) => {
 	const hours = Math.floor(seconds / 3600);
 	const minutes = Math.floor((seconds % 3600) / 60);
-	const secs = Math.floor(seconds % 60);
-	return `${hours}h ${minutes}m ${secs}s`;
+	return `${hours}h ${minutes}min`;
 };
 
 export default function AverageResponseTime({
@@ -94,15 +87,18 @@ export default function AverageResponseTime({
 	}, [averageResponseTimes]);
 
 	return (
-		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-center sm:w-[calc(50%-0.5rem)]">
-			<h3>Average Response Time</h3>
-			<h4 className="text-sm text-muted-foreground pb-2">
-				Time between messages for each sender
-			</h4>
+		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-end w-full lg:pr-4">
+			<div className="justify-start mb-2 text-center">
+				<h3 className="font-bold text-xl">Average Response Time</h3>
+				<h4 className="text-sm text-muted-foreground pb-2">
+					Time between messages for each sender
+				</h4>
+			</div>
+
 			<div className="w-full max-w-xs mb-4">
 				<label
 					htmlFor="days-slider"
-					className="block text-sm font-medium text-gray-700 mb-1"
+					className="block text-sm font-medium text-gray-700 mb-1 text-center"
 				>
 					Maximum days for valid response: {maxDays} day
 					{maxDays !== 1 ? "s" : ""}
@@ -116,34 +112,47 @@ export default function AverageResponseTime({
 					onValueChange={(value) => setMaxDays(value[0])}
 				/>
 			</div>
-			<CardContent className="flex-1">
-				<ChartContainer config={chartConfig} className="h-[200px]">
-					<ResponsiveContainer width="100%" height="100%">
-						<BarChart data={averageResponseTimes}>
-							<XAxis dataKey="sender" />
-							<YAxis
-								tickFormatter={formatTime}
-								domain={[0, Math.ceil(maxResponseTime / 3600) * 3600]}
+			<ChartContainer config={chartConfig} className="w-full">
+				<ResponsiveContainer width="100%" height="100%">
+					<BarChart
+						data={averageResponseTimes}
+						margin={{
+							top: 20,
+						}}
+					>
+						<CartesianGrid vertical={false} />
+						<XAxis
+							dataKey="sender"
+							tickLine={false}
+							tickMargin={10}
+							axisLine={false}
+							tickFormatter={(value) => value.length > 10 ? `${value.slice(0, 7)}...` : value}
+						/>
+						<ChartTooltip
+							cursor={false}
+							content={<ChartTooltipContent />}
+							formatter={(value: number) => formatTime(value)}
+						/>
+						<Bar dataKey="averageTime">
+							{averageResponseTimes.map((entry, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={chartConfig[entry.sender_slug].color}
+									radius={4}
+								/>
+							))}
+							<LabelList
+								dataKey="averageTime"
+								position="top"
+								offset={12}
+								className="fill-foreground"
+								fontSize={12}
+								formatter={formatTime}
 							/>
-							<Tooltip
-								formatter={(value: number) => [
-									formatTime(value),
-									"Average Response Time",
-								]}
-								labelFormatter={(label) => `${label}`}
-							/>
-							<Bar dataKey="averageTime">
-								{averageResponseTimes.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={chartConfig[entry.sender_slug].color}
-									/>
-								))}
-							</Bar>
-						</BarChart>
-					</ResponsiveContainer>
-				</ChartContainer>
-			</CardContent>
+						</Bar>
+					</BarChart>
+				</ResponsiveContainer>
+			</ChartContainer>
 		</div>
 	);
 }

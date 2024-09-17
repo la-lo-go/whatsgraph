@@ -129,7 +129,6 @@ export default function YearlyActivity({
 												/>
 											),
 										)}
-										<Legend />
 										<ChartTooltip content={<ChartTooltipContent />} />
 									</RadarChart>
 								</ResponsiveContainer>

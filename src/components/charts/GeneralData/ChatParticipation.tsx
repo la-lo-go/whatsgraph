@@ -57,14 +57,17 @@ export default function ChatParticipation({
 	}, [messages, chartConfig]);
 
 	return (
-		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-center sm:w-[calc(50%-0.5rem)]">
-			<h3>Chat Participation</h3>
-			<h4 className="text-sm text-muted-foreground">
-				Percentage of total words
-			</h4>
+		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-between w-full h-full">
+			<div className="justify-start mb-4 text-center">
+				<h3 className="font-bold text-xl">Chat Participation</h3>
+				<h4 className="text-sm text-muted-foreground">
+					Percentage of total words
+				</h4>
+			</div>
+
 			<ChartContainer
 				config={chartConfig}
-				className="mx-auto h-[200px] aspect-square"
+				className="mx-auto w-full max-w-[300px] aspect-square"
 			>
 				<ResponsiveContainer width="100%" height="100%">
 					<PieChart>
@@ -75,6 +78,7 @@ export default function ChatParticipation({
 							cx="50%"
 							cy="50%"
 							outerRadius="85%"
+							className="justify-center "
 						>
 							<LabelList
 								dataKey="percentage"

@@ -131,7 +131,6 @@ export default function ActivityDistributionChart({
 							/>
 						))}
 						<ChartTooltip content={<ChartTooltipContent />} />
-						<Legend />
 					</RadarChart>
 				</ResponsiveContainer>
 			</ChartContainer>
