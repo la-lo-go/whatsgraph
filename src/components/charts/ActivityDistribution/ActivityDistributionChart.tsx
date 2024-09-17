@@ -108,7 +108,7 @@ export default function ActivityDistributionChart({
 	};
 
 	return (
-		<div className="mb-8">
+		<div>
 			<h3 className="text-lg font-semibold mb-2 text-center">{title}</h3>
 
 			<ChartContainer config={chartConfig} className="h-[300px]">
