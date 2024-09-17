@@ -39,16 +39,6 @@ export default function Home() {
         </div>
       ) : messages ? (
         <div className="w-full">
-          <p className="mb-4 text-center">
-            {(() => {
-              const totalMensagens = messages.reduce(
-                (total, currentMessage) =>
-                  total + currentMessage.messages.length,
-                0
-              );
-              return `${totalMensagens.toLocaleString()} messages analysed  📊`;
-            })()}
-          </p>
           <ChartsDashboard messages={messages} />
           <div className=" text-2xl w-full max-w-md mx-auto mt-8">
             <p className="mb-2 font-semibold text-center group-hover:text-primary">
