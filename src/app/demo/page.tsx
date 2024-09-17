@@ -1,18 +1,13 @@
-"use client";
-import { useEffect, useState } from "react";
-import MyDropzone from "@/components/Dropzone";
+"use client"
+
+import { useState, useEffect } from "react";
 import ChartsDashboard from "@/components/ChartsDashboard";
-import { type WhatsAppMessages, ParseWhatsAppMessages } from "@/utils/WhatsAppMessage";
+import type { WhatsAppMessages } from "@/utils/WhatsAppMessage";
+import { ParseWhatsAppMessages } from "@/utils/WhatsAppMessage";
 
 export default function Home() {
   const [messages, setMessages] = useState<WhatsAppMessages[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [dropzoneKey, setDropzoneKey] = useState(0);
-
-  const handleMessagesParsed = (parsedMessages: WhatsAppMessages[]) => {
-    setMessages(parsedMessages);
-    setDropzoneKey((prevKey) => prevKey + 1);
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -24,7 +19,7 @@ export default function Home() {
       } catch (error) {
         console.error("Error fetching messages:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     fetchMessages();
@@ -32,31 +27,18 @@ export default function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {loading ? (
-        <div className="flex flex-col justify-center items-center h-64 w-full">
-          <p className="text-2xl font-bold pt-4 pb-10 text-center text-pretty">Loading demo, please wait :D</p>
-          <div className="animate-spin rounded-full h-32 w-32 border-4 border-primary border-t-transparent"/>
-        </div>
-      ) : messages ? (
+      {isLoading || !messages ? (
+        <ChartsDashboard messages={[]} isLoading={true} />
+      ) : (
         <div className="w-full">
-          <ChartsDashboard messages={messages} />
-          <div className=" text-2xl w-full max-w-md mx-auto mt-8">
+          <ChartsDashboard messages={messages} isLoading={false} />
+          <div className="text-2xl w-full max-w-md mx-auto mt-8">
             <p className="mb-2 font-semibold text-center group-hover:text-primary">
               Did you like it?&nbsp;
               <a href="/" className="font-bold underline decoration-emerald-400 transition duration-300 ease-in-out hover:bg-gradient-to-tr hover:from-emerald-200 hover:to-emerald-400 hover:bg-clip-text hover:text-transparent">
                 Try it now!
               </a>
             </p>
-          </div>
-        </div>
-      ) : (
-        <div className="text-center">
-          <p>No messages loaded. Please upload a file.</p>
-          <div className="w-full max-w-md mx-auto mt-8">
-            <MyDropzone
-              key={dropzoneKey}
-              onMessagesParsed={handleMessagesParsed}
-            />
           </div>
         </div>
       )}
