@@ -109,9 +109,9 @@ export default function YearlyActivity({
 			<CardContent>
 				<div className="flex flex-wrap justify-center gap-4">
 					{Object.entries(chartData).map(([year, data]) => (
-						<div key={year}>
+						<div key={year} className="max-md:w-full">
 							<h3 className="text-lg font-semibold mb-2 text-center">{year}</h3>
-							<ChartContainer config={chartConfig} className="h-[300px]">
+							<ChartContainer config={chartConfig} className="h-[300px] w-full">
 								<ResponsiveContainer width="100%" height="100%">
 									<RadarChart data={data}>
 										<PolarGrid />
