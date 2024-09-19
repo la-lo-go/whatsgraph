@@ -87,7 +87,7 @@ export default function AverageResponseTime({
 	}, [averageResponseTimes]);
 
 	return (
-		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-end w-full lg:pr-4">
+		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-between w-full lg:pr-4">
 			<div className="justify-start mb-2 text-center">
 				<h3 className="font-bold text-xl">Average Response Time</h3>
 				<h4 className="text-sm text-muted-foreground pb-2">
