@@ -46,8 +46,8 @@ export default function WordsPerMessage({
   }, [messages, chartConfig]);
 
   return (
-    <div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-between w-[calc(50%-0.5rem)]">
-      <div className="mb-4 text-center">
+    <div className="flex-1 pt-4 flex flex-col items-center justify-between w-[calc(50%-0.5rem)] max-sm:w-full">
+      <div className="sm:mb-4 text-center">
         <h3 className="place-center font-bold text-xl">Words per message</h3>
         <h4 className="text-sm text-muted-foreground pb-2">
           Average word count in messages

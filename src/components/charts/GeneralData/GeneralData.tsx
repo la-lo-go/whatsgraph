@@ -17,7 +17,7 @@ export default function GeneralData({
 	return (
 		<Card>
 			<CardContent>
-				<div className="flex flex-wrap justify-center gap-4">
+				<div className="flex flex-wrap max-sm:grid max-sm:grid-cols-1 justify-center gap-4">
 					<ChatParticipation messages={messages} />
 					<AverageResponseTime messages={messages} />
 					<WordsPerMessage messages={messages} />

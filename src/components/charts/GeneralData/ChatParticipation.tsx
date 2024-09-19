@@ -57,7 +57,7 @@ export default function ChatParticipation({
 	}, [messages, chartConfig]);
 
 	return (
-		<div className="flex-1 pb-0 pt-4 flex flex-col items-center justify-between w-full h-full">
+		<div className="flex-1 pt-4 flex flex-col items-center justify-between w-full h-full">
 			<div className="justify-start mb-4 text-center">
 				<h3 className="font-bold text-xl">Chat Participation</h3>
 				<h4 className="text-sm text-muted-foreground">
