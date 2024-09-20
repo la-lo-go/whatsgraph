@@ -99,6 +99,7 @@ export default function MostUsedWords({
 											tickMargin={10}
 											axisLine={false}
 											fontWeight={"bold"}
+											tickFormatter={(value) => value.length > 7 ? `${value.slice(0, 4)}...` : value}
 										/>
 										<ChartTooltip
 											cursor={false}
